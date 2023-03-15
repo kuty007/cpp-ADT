@@ -13,7 +13,11 @@ struct AdptArray_ {
 
 typedef struct AdptArray_ AdptArray_;
 typedef AdptArray_ *PAdptArray;
-
+///
+/// \param copyElement  copy function book or person
+/// \param freeElement  delete function book or person
+/// \param printElement  print function book or person
+/// \return new AdptArray or NULL if malloc failed
 PAdptArray CreateAdptArray(COPY_FUNC copyElement, DEL_FUNC freeElement, PRINT_FUNC printElement) {
     PAdptArray array = (PAdptArray) malloc(sizeof(AdptArray_));//allocate space for the array
     if (array == NULL) {
@@ -29,6 +33,10 @@ PAdptArray CreateAdptArray(COPY_FUNC copyElement, DEL_FUNC freeElement, PRINT_FU
     return array;
 }
 
+/// \param array AdptArray
+/// \param index index to set the element at
+/// \param element the element to set
+/// \return  SUCCESS if the element was set, FAIL otherwise
 Result SetAdptArrayAt(PAdptArray array, int index, PElement element) {
     if (array == NULL) {//if the array is null
         return FAIL;
@@ -52,19 +60,25 @@ Result SetAdptArrayAt(PAdptArray array, int index, PElement element) {
     array->Earray[index] = array->copyElement(element);//copy the element to the index
     return SUCCESS;
 }
-
+///
+/// \param array AdptArray
+/// \param index index of the element
+/// \return the element at the index if the index is valid, NULL otherwise
 PElement GetAdptArrayAt(PAdptArray array, int index) {
-    if (index >= array->size || array->Earray[index] == NULL) {//if the index is bigger than the size of the elements array
+    if (index >= array->size || array->Earray[index] == NULL) {//if the index is bigger than the size of the elements array or the index is null
         return NULL;
     }
     return array->copyElement(array->Earray[index]);//copy_person or copy_book
 }
 
-
+/// \brief Get the Adpt Array Size object
+/// \param array
+/// \return  the size of the array
 int GetAdptArraySize(PAdptArray array) {
     return array->size;//return the size of the array
 }
-
+/// \brief Print the Adpt Array elements
+/// \param array
 void PrintDB(PAdptArray array) {
     if (array == NULL) {//if the array is null
         return;
@@ -75,7 +89,8 @@ void PrintDB(PAdptArray array) {
         }
     }
 }
-
+/// \brief Delete the Adpt Array
+/// \param array
 void DeleteAdptArray(PAdptArray array) {
     if (array->Earray != NULL) {//
         for (int i = 0; i < array->size; i++) {//for each index in the array
