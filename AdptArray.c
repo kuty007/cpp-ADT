@@ -4,7 +4,7 @@
 #include <assert.h>
 
 struct AdptArray_ {
-    void **array;
+    void **Earray;
     int size;
     COPY_FUNC copyElement;
     DEL_FUNC freeElement;
@@ -18,13 +18,13 @@ PAdptArray CreateAdptArray(COPY_FUNC copyElement, DEL_FUNC freeElement, PRINT_FU
     PAdptArray array = (PAdptArray) malloc(sizeof(AdptArray_));//allocate space for the array
     if (array == NULL) {
         printf("Error: malloc has failed\n");
-        exit(1);
+        return NULL;
     }
     array->size = 0;//initialize the size to 0
     array->copyElement = copyElement;//initialize the copy function
     array->freeElement = freeElement;//initialize the delete function
     array->printElement = printElement;//initialize the print function
-    array->array = NULL;//initialize the array to NULL
+    array->Earray = NULL;//initialize the elements array to NULL
 
     return array;
 }
@@ -33,36 +33,31 @@ Result SetAdptArrayAt(PAdptArray array, int index, PElement element) {
     if (array == NULL) {//if the array is null
         return FAIL;
     }
-    if (index >= array->size) {//if the index is bigger than the size of the array
-        void **newArray = (void **) calloc(index + 1, sizeof(void *));//allocate space for a new array
+    if (index >= array->size) {//if the index is bigger than the size of the elements array
+        void **newArray = (void **) calloc(index + 1, sizeof(void *));//allocate space for a new elements array
         if (newArray == NULL) {
             printf("Error: malloc has failed\n");
             return FAIL;
         }
-        for (int i = 0; i < array->size; i++) {//for each index in the array
-            newArray[i] = array->array[i];//copy the old array to the new array
+        for (int i = 0; i < array->size; i++) {//for each index in the elements array
+            newArray[i] = array->Earray[i];//copy the old elements array to the new elements array
         }
-        free(array->array);//free the old array
-        array->array = newArray;//set the array to the new array
+        free(array->Earray);//free the old elements array
+        array->Earray = newArray;//set the array to the new elements array
         array->size = index + 1;//set the size to the index + 1
     }
-    if (array->array[index] != NULL) {//if the index is not null
-        array->freeElement(array->array[index]);//delete the element at the index
+    if (array->Earray[index] != NULL) {//if the index is not null
+        array->freeElement(array->Earray[index]);//delete the element at the index
     }
-    array->array[index] = array->copyElement(element);//copy the element to the index
+    array->Earray[index] = array->copyElement(element);//copy the element to the index
     return SUCCESS;
 }
 
-//get a copy of the element at the index
-
 PElement GetAdptArrayAt(PAdptArray array, int index) {
-    if (index >= array->size) {//if the index is bigger than the size of the array
+    if (index >= array->size || array->Earray[index] == NULL) {//if the index is bigger than the size of the elements array
         return NULL;
     }
-    if (array->array[index] == NULL) {//if the index is null
-        return NULL;
-    }
-    return array->copyElement(array->array[index]);//copy_person or copy_book
+    return array->copyElement(array->Earray[index]);//copy_person or copy_book
 }
 
 
@@ -71,21 +66,24 @@ int GetAdptArraySize(PAdptArray array) {
 }
 
 void PrintDB(PAdptArray array) {
+    if (array == NULL) {//if the array is null
+        return;
+    }
     for (int i = 0; i < array->size; i++) {//for each index in the array
-        if (array->array[i] != NULL) {//if the index is not null
-            array->printElement(array->array[i]);//print_person or print_book
+        if (array->Earray[i] != NULL) {//if the index is not null
+            array->printElement(array->Earray[i]);//print_person or print_book
         }
     }
 }
 
 void DeleteAdptArray(PAdptArray array) {
-    if (array->array != NULL) {
+    if (array->Earray != NULL) {//
         for (int i = 0; i < array->size; i++) {//for each index in the array
-            if (array->array[i] != NULL) {//if the index is not null
-                array->freeElement((array->array)[i]);//delete_person or delete_book
+            if (array->Earray[i] != NULL) {//if the index is not null
+                array->freeElement((array->Earray)[i]);//delete_person or delete_book
             }
         }
-        free(array->array);//free the array
+        free(array->Earray);//free the elements array
     }
     free(array);//free the AdptArray struct
 }
