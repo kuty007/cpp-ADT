@@ -13,6 +13,7 @@ struct AdptArray_ {
 
 typedef struct AdptArray_ AdptArray_;
 typedef AdptArray_ *PAdptArray;
+
 ///
 /// \param copyElement  copy function book or person
 /// \param freeElement  delete function book or person
@@ -41,6 +42,10 @@ Result SetAdptArrayAt(PAdptArray array, int index, PElement element) {
     if (array == NULL) {//if the array is null
         return FAIL;
     }
+    if (index < 0) {//if the index is negative
+        printf("Error: index is negative\n");
+        return FAIL;
+    }
     if (index >= array->size) {//if the index is bigger than the size of the elements array
         void **newArray = (void **) calloc(index + 1, sizeof(void *));//allocate space for a new elements array
         if (newArray == NULL) {
@@ -60,12 +65,14 @@ Result SetAdptArrayAt(PAdptArray array, int index, PElement element) {
     array->Earray[index] = array->copyElement(element);//copy the element to the index
     return SUCCESS;
 }
+
 ///
 /// \param array AdptArray
 /// \param index index of the element
 /// \return the element at the index if the index is valid, NULL otherwise
 PElement GetAdptArrayAt(PAdptArray array, int index) {
-    if (index >= array->size || array->Earray[index] == NULL) {//if the index is bigger than the size of the elements array or the index is null
+    if (index >= array->size || array->Earray[index] == NULL || index <
+                                                                0) {//if the index is bigger than the size of the elements array or the index is null or the index is negative
         return NULL;
     }
     return array->copyElement(array->Earray[index]);//copy_person or copy_book
@@ -77,6 +84,7 @@ PElement GetAdptArrayAt(PAdptArray array, int index) {
 int GetAdptArraySize(PAdptArray array) {
     return array->size;//return the size of the array
 }
+
 /// \brief Print the Adpt Array elements
 /// \param array
 void PrintDB(PAdptArray array) {
@@ -89,6 +97,7 @@ void PrintDB(PAdptArray array) {
         }
     }
 }
+
 /// \brief Delete the Adpt Array
 /// \param array
 void DeleteAdptArray(PAdptArray array) {
