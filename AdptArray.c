@@ -101,7 +101,7 @@ void PrintDB(PAdptArray array) {
 /// \brief Delete the Adpt Array
 /// \param array
 void DeleteAdptArray(PAdptArray array) {
-    if (array->Earray != NULL) {//
+    if (array->Earray != NULL) {// if the elements array is not null
         for (int i = 0; i < array->size; i++) {//for each index in the array
             if (array->Earray[i] != NULL) {//if the index is not null
                 array->freeElement((array->Earray)[i]);//delete_person or delete_book
