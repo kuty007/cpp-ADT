@@ -49,7 +49,7 @@ Result SetAdptArrayAt(PAdptArray array, int index, PElement element) {
     if (index >= array->size) {//if the index is bigger than the size of the elements array
         void **newArray = (void **) calloc(index + 1, sizeof(void *));//allocate space for a new elements array
         if (newArray == NULL) {
-            printf("Error: malloc has failed\n");
+            printf("Error: calloc has failed\n");
             return FAIL;
         }
         for (int i = 0; i < array->size; i++) {//for each index in the elements array
